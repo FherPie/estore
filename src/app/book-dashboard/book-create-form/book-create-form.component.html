@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<!-- <div class="container-fluid">
   <h5>{{title}}</h5>
 <form (ngSubmit)="onSubmit(bookForm)" #bookForm="ngForm" novalidate="">
   <div class="form-group">
@@ -8,8 +8,7 @@
     [(ngModel)]="miLibro.name" 
     name="name" 
     #name="ngModel"
-    minlength="5" 
-    appForbiddenName="bob">
+    minlength="5" >
     <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
       <div *ngIf="name.errors?.required">
         This field is required
@@ -30,10 +29,6 @@
       </div>
     </div>
   </div>
-
-
-
-
   <div class="form-group">
     <label for="gender">Year</label>
     <input min="1990" max="2022" type="number" class="form-control" id="year" required [(ngModel)]="miLibro.year" name="year" #year="ngModel">
@@ -41,7 +36,52 @@
   <button [disabled]="!bookForm.form.valid" type="submit" class="btn btn-success">Submit</button>
 </form>
 </div>
+Modelo: {{miLibro.name}}
+Nombre Valido: {{name.valid}} -->
 
 
+<h2>Custom Validatos en Template Driven Forms</h2>
+<div class="container-fluid">
+  <h5>{{title}}</h5>
+<form (ngSubmit)="onSubmit(bookForm)" #bookForm="ngForm" novalidate="">
+  <div class="form-group">
+    <label for="name">Name *</label>
+    <input type="text" class="form-control" id="name" 
+    required 
+    [(ngModel)]="miLibro.name" 
+    name="name" 
+    #name="ngModel"
+    minlength="5" 
+    appForbiddenName="bob">
+    <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+      <div *ngIf="name.errors?.required">
+        This field is required
+      </div>
+      <div *ngIf="name.errors?.minlength">
+        The length of the name is less than expected.
+      </div>
+      <div *ngIf="name.errors?.['forbiddenName']">
+        Name cannot be Bob.
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="gender">Gender *</label>
+    <select  class="form-control" id="gender" required [(ngModel)]="miLibro.gender" name="gender"  #gender="ngModel">
+      <option *ngFor="let element of genders" [value]="element">{{element}}</option>
+    </select>
+     <div [hidden]="gender.valid || gender.pristine" class="alert alert-danger">
+      <div *ngIf="gender.errors?.required">
+        This field is required
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="gender">Year</label>
+    <input min="1990" max="2022" type="number" class="form-control" id="year" required [(ngModel)]="miLibro.year" name="year" #year="ngModel">
+  </div>
+  <button [disabled]="!bookForm.form.valid" type="submit" class="btn btn-success">Submit</button>
+</form>
+</div>
 Modelo: {{miLibro.name}}
 Nombre Valido: {{name.valid}}
