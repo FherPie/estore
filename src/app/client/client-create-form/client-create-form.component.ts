@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms'
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms'
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 //import { forbiddenNameValidator } from './forbidden-name.directive';
 
@@ -11,7 +11,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 export class ClientCreateFormComponent implements OnInit {
 
   // name= new FormControl(121);
-  
+
   // clientForm= new FormGroup({
   //   firstName: new FormControl('',[Validators.required]),
   //   lastName: new FormControl('',[Validators.required]),
@@ -28,7 +28,7 @@ export class ClientCreateFormComponent implements OnInit {
   //   })
   // });
 
- 
+
   // clientForm= this.fb.group({
   //   firstName: ['4', Validators.required],
   //   lastName: [''],
@@ -39,7 +39,7 @@ export class ClientCreateFormComponent implements OnInit {
   //     zip: [''] 
   //   }),
   // });
-  
+
 
   // clientForm= this.fb.group({
   //   firstName: ['', Validators.required],
@@ -54,14 +54,14 @@ export class ClientCreateFormComponent implements OnInit {
   //     this.fb.control('')
   //   ])
   // });
-  
 
-  get phones(){
+
+  get phones() {
     return this.clientForm.get('phones') as FormArray;
   }
 
-  addPhone(){
-     this.phones.push(this.fb.control(''));
+  addPhone() {
+    this.phones.push(this.fb.control(''));
   }
 
 
@@ -94,42 +94,67 @@ export class ClientCreateFormComponent implements OnInit {
     this.clientForm.controls.firstName.setValue("MIA");
   }
 
-  constructor(private fb:FormBuilder) {   
+  constructor(private fb: FormBuilder) {
   }
 
 
   // BEGIN BUILT-IN VALIDATORS
 
-  clientForm!:FormGroup;
+  // clientForm!:FormGroup;
 
-  defaultClient = { firstName: 'Dee', lastName: 'Cameron', email:''};
+  // defaultClient = { firstName: 'Dee', lastName: 'Cameron', email:''};
 
-  ngOnInit(): void {
-    this.clientForm= new FormGroup({
-    firstName: new FormControl(this.defaultClient.firstName,
-      [Validators.required,
-      Validators.minLength(4),
-      this.forbiddenNameValidator(/bob/i)
-    ]),
-    lastName: new FormControl(this.defaultClient.lastName),
-    email: new FormControl(this.defaultClient.email, [Validators.required, Validators.email]),
-  });
-  }
-    forbiddenNameValidator(nameRe: RegExp): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const forbidden = nameRe.test(control.value);
-      return forbidden ? { forbiddenName: { value: control.value } } : null;
-    };
-  }
+  // ngOnInit(): void {
+  //   this.clientForm= new FormGroup({
+  //   firstName: new FormControl(this.defaultClient.firstName,
+  //     [Validators.required,
+  //     Validators.minLength(4),
+  //     this.forbiddenNameValidator(/bob/i)
+  //   ]),
+  //   lastName: new FormControl(this.defaultClient.lastName),
+  //   email: new FormControl(this.defaultClient.email, [Validators.required, Validators.email]),
+  // });
+  // }
+  //   forbiddenNameValidator(nameRe: RegExp): ValidatorFn {
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     const forbidden = nameRe.test(control.value);
+  //     return forbidden ? { forbiddenName: { value: control.value } } : null;
+  //   };
+  // }
 
   // END BUILT-IN VALIDATORS
+
+
+  // BEGIN ADDING CROSS-VALIDATION TO REACTIVE FORMS
+  clientForm!: FormGroup;
+  defaultClient = { firstName: 'Dee', lastName: 'Cameron', email: '' };
+  ngOnInit(): void {
+    this.clientForm = new FormGroup({
+      firstName: new FormControl(''),
+      lastName: new FormControl(''),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      remail: new FormControl('', [Validators.required, Validators.email]),
+    }, { validators: this.rewriteValidationEmailValidator });
+  }
+
+  rewriteValidationEmailValidator: ValidatorFn = (control: AbstractControl)
+    : ValidationErrors | null => {
+    const email = control.get('email');
+    const remail = control.get('remail');
+    return email && remail && email.value !== remail.value ? { rewriteValidationEmail: true } : null;
+  };
+
+
+
+  // ENDS ADDING CROSS-VALIDATION TO REACTIVE FORMS
+
 
 
   // updateName(){
   // this.name.setValue("Alejandra");
   // }
 
-  onSubmit(): void{
+  onSubmit(): void {
     // console.warn(this.clientForm.value);
   }
 
