@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms'
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
+import { UniqueClientEmailValidator } from './unique-client-email-validator';
 //import { forbiddenNameValidator } from './forbidden-name.directive';
 
 @Component({
@@ -94,7 +95,7 @@ export class ClientCreateFormComponent implements OnInit {
     this.clientForm.controls.firstName.setValue("MIA");
   }
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private uniqueClientMailValidator: UniqueClientEmailValidator) {
   }
 
 
@@ -126,13 +127,42 @@ export class ClientCreateFormComponent implements OnInit {
 
 
   // BEGIN ADDING CROSS-VALIDATION TO REACTIVE FORMS
+  // clientForm!: FormGroup;
+  // defaultClient = { firstName: 'Dee', lastName: 'Cameron', email: '' };
+  // ngOnInit(): void {
+  //   this.clientForm = new FormGroup({
+  //     firstName: new FormControl(''),
+  //     lastName: new FormControl(''),
+  //     email: new FormControl('', [Validators.required, Validators.email]),
+  //     remail: new FormControl('', [Validators.required, Validators.email]),
+  //   }, { validators: this.rewriteValidationEmailValidator });
+  // }
+
+  // rewriteValidationEmailValidator: ValidatorFn = (control: AbstractControl)
+  //   : ValidationErrors | null => {
+  //   const email = control.get('email');
+  //   const remail = control.get('remail');
+  //   return email && remail && email.value !== remail.value ? { rewriteValidationEmail: true } : null;
+  // };
+
+  // ENDS ADDING CROSS-VALIDATION TO REACTIVE FORMS
+
+
+  // BEGIN ADDING ASYNCHRONOUS VALIDATORS TO REACTIVE FORMS
   clientForm!: FormGroup;
   defaultClient = { firstName: 'Dee', lastName: 'Cameron', email: '' };
+
+  emailControl= new FormControl('', {
+  validators : [Validators.required, Validators.email],
+  asyncValidators: [this.uniqueClientMailValidator.validate.bind(this.uniqueClientMailValidator)],
+  updateOn: 'blur'
+  });
+
   ngOnInit(): void {
     this.clientForm = new FormGroup({
       firstName: new FormControl(''),
       lastName: new FormControl(''),
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: this.emailControl,
       remail: new FormControl('', [Validators.required, Validators.email]),
     }, { validators: this.rewriteValidationEmailValidator });
   }
@@ -144,9 +174,7 @@ export class ClientCreateFormComponent implements OnInit {
     return email && remail && email.value !== remail.value ? { rewriteValidationEmail: true } : null;
   };
 
-
-
-  // ENDS ADDING CROSS-VALIDATION TO REACTIVE FORMS
+  // ENDS ADDING ASYNCHRONOUS VALIDATORS TO REACTIVE FORMS
 
 
 

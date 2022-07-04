@@ -120,7 +120,7 @@ FORM STATUS: {{clientForm.status}} -->
 
 
 
-<h2>Adding cross-valdiation to reactive forms</h2>
+<!-- <h2>Adding cross-valdiation to reactive forms</h2>
 <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
 
    <div class="form-group">
@@ -152,6 +152,65 @@ FORM STATUS: {{clientForm.status}} -->
             <li *ngIf="clientForm.get('email')?.errors?.required">Valor de Campo Requerido</li>
             <li *ngIf="clientForm.get('email')?.errors?.email">El campo debe tener un formato de <strong>email.</strong>
             </li>
+         </ul>
+      </div>
+   </div>
+
+   <div class="form-group">
+      <label for="remail">Repeat Email: </label>
+      <input class="form-control" id="remail" type="text" formControlName="remail">
+      <div class="alert alert-danger"
+         *ngIf="clientForm.get('remail')?.invalid && (clientForm.get('remail')?.dirty || clientForm.get('remail')?.touched)">
+         <ul>
+            <li *ngIf="clientForm.get('remail')?.errors?.required">Valor de Campo Requerido</li>
+            <li *ngIf="clientForm.get('remail')?.errors?.email">El campo debe tener un formato de <strong>email.</strong>
+            </li>
+         </ul>
+      </div>
+   </div>
+   <div class="alert alert-danger"
+         *ngIf="clientForm.errors?.['rewriteValidationEmail'] && (clientForm.get('remail')?.dirty || clientForm.get('remail')?.touched)">
+         Los emails deben ser iguales
+   </div>
+   <button type="submit" [disabled]="!clientForm.valid">Submit</button>
+</form> -->
+
+
+
+<h2>Adding async validators  to reactive forms</h2>
+<form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+
+   <div class="form-group">
+      <label for="first-name">First Name:</label>
+      <input class="form-control" id="first-name" type="text" formControlName="firstName">
+      <div class="alert alert-danger"
+         *ngIf="clientForm.get('firstName')?.invalid && (clientForm.get('firstName')?.dirty || clientForm.get('firstName')?.touched)">
+         <ul>
+            <li *ngIf="clientForm.get('firstName')?.errors?.required">Valor de Campo Requerido</li>
+            <li *ngIf="clientForm.get('firstName')?.errors?.minlength">EL nombre no debe tener <strong>menos</strong> de
+               4 caracteres</li>
+            <li *ngIf="clientForm.get('firstName')?.errors?.forbiddenName">El nombre no debe ser <strong>Bob</strong>
+            </li>
+
+         </ul>
+      </div>
+   </div>
+   <div class="form-group">
+      <label for="last-name">Last Name: </label>
+      <input class="form-control" id="last-name" type="text" formControlName="lastName">
+   </div>
+
+   <div class="form-group">
+      <label for="email">Email: </label>
+      <input class="form-control" id="email" type="text" formControlName="email">
+      <div class="alert alert-danger"
+         *ngIf="clientForm.get('email')?.invalid && (clientForm.get('email')?.dirty || clientForm.get('email')?.touched)">
+         <ul>
+            <li *ngIf="clientForm.get('email')?.errors?.required">Valor de Campo Requerido</li>
+            <li *ngIf="clientForm.get('email')?.errors?.email">El campo debe tener un formato de <strong>email.</strong>
+            </li>
+            <div *ngIf="clientForm.get('email')?.pending">Validating...</div>
+            <li *ngIf="clientForm.get('email')?.errors?.uniqueClientEmailValidator">El email ya se encuentra tomado</li>
          </ul>
       </div>
    </div>
